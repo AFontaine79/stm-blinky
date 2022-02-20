@@ -1,0 +1,7 @@
+# Ignore build output
+build/
+
+# Ignore Eclipse files
+.project
+.cproject
+.settings/
