@@ -9,6 +9,7 @@
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+void StartPwmOnPA5(void);
 
 /**
   * @brief  The application entry point.
@@ -17,6 +18,7 @@ void SystemClock_Config(void);
 int main(void)
 {
   SystemClock_Config();
+  StartPwmOnPA5();
 
   while (1)
   {
@@ -76,6 +78,54 @@ void SystemClock_Config(void)
       RCC_CFGR_PPRE1_DIV1 |
       RCC_CFGR_PPRE2_DIV1);
   RCC->CFGR = cfgr;
+}
+
+/**
+  * @brief  Begins 1Hz blink on PA5 using TIM2_CH1
+  *         PA5 = Arduino D13 = Green LED on NUCLEO board
+  *         TIM2_CH1 is alternate function 1 on PA5
+  * @retval None
+  */
+void StartPwmOnPA5(void)
+{
+  /* Enable clocks to GPIOA and TIM2 peripherals */
+  RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN;
+  RCC->APB1ENR1 |= RCC_APB1ENR1_TIM2EN;
+
+  /* Select AF1 (TIM2_CH1) for PA5 */
+  GPIOA->AFR[0] |= (1 << GPIO_AFRL_AFSEL5_Pos);
+
+  /* Set PA5 in alternate function mode */
+  GPIOA->MODER &= ~GPIO_MODER_MODE5_Msk;  /* Clear first since 11b is the reset state */
+  GPIOA->MODER |= (2 << GPIO_MODER_MODE5_Pos);
+
+  /* Disable the timer for configuration */
+  TIM2->CR1 = 0;
+  TIM2->CR2 = 0;
+
+  /* Prescale by 10k.  At 80MHz, this gives tick freq of 8kHz */
+  TIM2->PSC = 9999;   /* Prescalar = (PSC + 1) */
+
+  /* Count from 0 to 7999 then roll over */
+  TIM2->CR1 |= TIM_CR1_ARPE;
+  TIM2->ARR = 7999;
+
+  /*
+   * Output Compare Mode 1 is set to 0110b, which is PWM mode 1
+   *   Channel 1 is active as long as TIM2_CNT < TIM2_CCR1
+   *   and inactive otherwise.
+   */
+  TIM2->CCMR1 =
+      TIM_CCMR1_OC1PE |
+      (6 << TIM_CCMR1_OC1M_Pos);
+  TIM2->CCER = TIM_CCER_CC1E;
+
+  /* Toggle CH1 output at half count */
+  TIM2->CCR1 = 4000;
+
+  /* Enable TIM2 thus starting PA5 1Hz PWM */
+  TIM2->EGR |= TIM_EGR_UG;
+  TIM2->CR1 |= TIM_CR1_CEN;
 }
 
 /**
