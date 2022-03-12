@@ -14,7 +14,7 @@ The project builds using CMake, but there is no proper install target yet.  Curr
 Build and load has been verified in:
 - [x] Windows Git Bash
 - [x] Windows Cmd.exe
-- [ ] Ubuntu in Windows/WSL
+- [x] Ubuntu in Windows/WSL
 - [ ] Native Linux system
 - [ ] Mac OS X
 
@@ -102,9 +102,28 @@ The build outputs are `build`, `build.map` and `build.hex` in the `build/Src` di
 **Note:** `build` is the ELF file although it is not named `build.elf`.
 
 ### Loading
-There is, as of yet, no proper install target.  Instead, issue `./flash-device.sh` from the root directory of the repo.  You must have the [SEGGER J-Link drivers](https://www.segger.com/downloads/jlink/) installed to do this.  (On Windows, this can be done from Git Bash.)
+There is, as of yet, no proper install target.  Instead, you will need to follow directions below depending on how your Nucleo board appears when connected to your computer.  By default, Nucleo boards have a built-in ST-Link.  The Nucleo should identify as an ST-Link when connected to your computer.  However, the on-board ST-Link [can be converted to a J-Link](https://www.segger.com/products/debug-probes/j-link/models/other-j-links/st-link-on-board/), which allows for use of the capabilities of the J-Link.
 
-Alternatively, you can download [STM32 Cube Programmer](https://www.st.com/en/development-tools/stm32cubeprog.html) and use it to manually load `Blinky.hex` onto your Nucleo board.
+#### If your Nucleo shows up as ST-Link
+- If you do not have it already, download and install [STM32 Cube Programmer](https://www.st.com/en/development-tools/stm32cubeprog.html).
+- Run the build as described above.
+- Connect your Nucleo board.
+- Start STM32CubeProgrammer.
+- Click the green 'Connect' button in the upper right.  Make sure the status above the 'Connect' button changes to Connected.  If this fails, check that your board is enumerating correclty and/or check the drop-down selection to the left of the 'Connect' button.
+- After connecting, on the left-hand set of icons, select the one that looks like an arrow pointing down into a device.  The title above the active area of the GUI should change to "Erasing & Programming".
+- For the file path, click 'Browse' and select the `Blinky.hex` file that is in the `build/Src` subfolder.  The `build` folder appears after running the build.
+- Select 'Run after programming'.
+- Click 'Start Programming'.
+- Click the green 'Disconnect' button in the upper right.
+ 
+The board should now be blinking the LED once per second.
+
+#### If your Nucleo shows up as a J-Link
+- If you do not have them already, download and install the [SEGGER J-Link drivers](https://www.segger.com/downloads/jlink/).
+- Run the build as described above.
+- Run `./flash-device.sh` from the root directory of the repo.  (On Windows, this can be done from Git Bash.)
+ 
+The board should now be blinking the LED once per second.
 
 ### Testing
 Not yet implemented
@@ -128,9 +147,8 @@ If you need further assistance or have any questions, please file a GitHub issue
 
 ## Future Work
 - Add a proper install target possibly using CMake's `install()` command.  I need to explore this further since I don't fully understand `install()` yet.  At the very least, install should be platform agnostic and actually flash the hardware.
-- Possibly fix the install script to use ST-Link software instead of J-Link.
+- Possibly fix the install script to allow load over ST-Link as well as J-Link.
 - Figure out why adding `-specs=nano.specs` and `-specs=nosys.specs` didn't work.  I got a strange error about "attempt to rename spec 'link' to already defined spec 'nano_link'".  Googling that is not helpful.  I gave up and removed all `-specs=` flags.  (STMCubeIDE is using these flags though, so I dunno what gives.)
-- Change the linker output from Blinky to Blinky.elf so as to follow common convention and disambiguate the build artifacts.
 - Figure out how to specify the build variant at the command line (e.g. `Debug` vs `Release`).
 - Follow up with other things like CI, static analysis, clang formatter, and so forth.
 
