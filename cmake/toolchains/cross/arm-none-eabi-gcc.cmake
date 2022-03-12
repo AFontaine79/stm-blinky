@@ -26,20 +26,10 @@ endif()
 ####################
 
 set(CMAKE_C_COMPILER    arm-none-eabi-gcc)
-set(CMAKE_CXX_COMPILER  arm-none-eabi-g++)
-set(AS                  arm-none-eabi-as)
-set(CMAKE_AR            arm-none-eabi-gcc-ar)
-set(OBJCOPY             arm-none-eabi-objcopy)
-set(OBJDUMP             arm-none-eabi-objdump)
-set(SIZE                arm-none-eabi-size)
-
-# If set to ONLY, then only the roots in CMAKE_FIND_ROOT_PATH (i.e., the host machine)
-# will be searched. If set to NEVER, then the roots in CMAKE_FIND_ROOT_PATH will
-# be ignored and only the build machine root will be used.
-set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+set(CMAKE_ASM_COMPILER  arm-none-eabi-gcc)
+set(CMAKE_OBJCOPY       arm-none-eabi-objcopy)
+set(CMAKE_OBJDUMP       arm-none-eabi-objdump)
+set(CMAKE_SIZE          arm-none-eabi-size)
 
 # Test compiles will use static libraries, so we won't need to define linker flags
 # and scripts for linking to succeed

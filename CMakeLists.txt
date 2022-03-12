@@ -5,6 +5,7 @@ project(StmNucleoBlinky
 	LANGUAGES C CXX ASM)
 
 set_property(GLOBAL PROPERTY C_STANDARD 11)
+set(CMAKE_EXECUTABLE_SUFFIX ".elf")
 
 include(cmake/AddExecutableWithLinkerScriptDep.cmake)
 include(cmake/GenerateMapFile.cmake)
