@@ -1,0 +1,63 @@
+{
+    "name": "stm-blinky",
+    "version": "0.1.0",
+    "description": "Blinky for the STM32 Nucleo built entirely using CMake.",
+    "main": "",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/AFontaine79/stm-blinky"
+    },
+    "bugs": {
+      "url": "https://github.com/AFontaine79/stm-blinky/issues"
+    },
+    "homepage": "https://github.com/AFontaine79/stm-blinky",
+    "keywords": [
+      "xpack"
+    ],
+    "author": {
+      "name": "Aaron Fontaine",
+      "email": "AFontaine79@yahoo.com",
+      "url": "https://github.com/AFontaine79"
+    },
+    "license": "MIT",
+    "config": {},
+    "dependencies": {},
+    "devDependencies": {
+      "@xpack-dev-tools/arm-none-eabi-gcc": "10.3.1-2.3.1",
+      "@xpack-dev-tools/cmake": "3.20.6-2.1",
+      "@xpack-dev-tools/ninja-build": "1.10.2-5.1"
+    },
+    "xpack": {
+      "minimumXpmRequired": "0.10.2",
+      "properties": {
+        "buildFolderRelativePath": "{{ 'build' | path_join: configuration.name | to_filename | downcase }}",
+        "commandBuild": "make",
+        "commandClean": "make clean"
+      },
+      "actions": {
+        "build-all": [
+          "xpm run build --config Debug"
+        ],
+        "clean-all": [
+          "xpm run clean --config Debug"
+        ]
+      },
+      "buildConfigurations": {
+        "Debug": {
+          "properties": {
+            "buildType": "Debug"
+          },
+          "actions": {
+            "build": [
+              "{{ properties.commandBuild }}"
+            ],
+            "clean": "{{ properties.commandClean }}"
+          }
+        }
+      }
+    }
+  }
+  

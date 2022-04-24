@@ -1,7 +1,14 @@
 # Ignore build output
 build/
 
+# Ignore VS Code files
+.vscode/
+
 # Ignore Eclipse files
 .project
 .cproject
 .settings/
+
+# Ignore xPack files
+node_modules/
+xpacks/

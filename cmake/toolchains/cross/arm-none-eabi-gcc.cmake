@@ -27,9 +27,6 @@ endif()
 
 set(CMAKE_C_COMPILER    arm-none-eabi-gcc)
 set(CMAKE_ASM_COMPILER  arm-none-eabi-gcc)
-set(CMAKE_OBJCOPY       arm-none-eabi-objcopy)
-set(CMAKE_OBJDUMP       arm-none-eabi-objdump)
-set(CMAKE_SIZE          arm-none-eabi-size)
 
 # Test compiles will use static libraries, so we won't need to define linker flags
 # and scripts for linking to succeed
