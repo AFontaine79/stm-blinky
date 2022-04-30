@@ -2,7 +2,9 @@
 build/
 
 # Ignore VS Code files
-.vscode/
+.vscode/*
+!.vscode/c_cpp_properties.json
+!.vscode/launch.json
 
 # Ignore Eclipse files
 .project

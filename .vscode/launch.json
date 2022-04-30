@@ -1,0 +1,44 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch J-Link",
+            "cwd": "${workspaceFolder}",
+            "executable": "./build/stm/debug/Src/Blinky.elf",
+            "request": "launch",
+            "type":"cortex-debug",
+            "servertype": "jlink",
+            "device": "STM32L476RG",
+            "svdFile": "./Drivers/SVD/STM32L476.svd",
+            "gdbPath": "${workspaceFolder}/xpacks/xpack-dev-tools-arm-none-eabi-gcc/.content/bin/arm-none-eabi-gdb",
+            "preLaunchCommands": [
+                "set mem inaccessible-by-default off"
+            ],
+            "serverArgs": [
+                "-singlerun",
+                "-strict",
+                "-timeout 0",
+                "-nogui",
+                "-endian", "little",
+                "-speed", "4000",
+                "-vd", "-ir",
+                "-localhostonly", "1"
+            ]
+        },
+        {
+            "name": "Launch ST-Link",
+            "cwd": "${workspaceFolder}",
+            "executable": "./build/stm/debug/Src/Blinky.elf",
+            "request": "launch",
+            "type":"cortex-debug",
+            "servertype": "stlink",
+            "device": "STM32L476RG",
+            "svdFile": "./Drivers/SVD/STM32L476.svd",
+            "gdbPath": "${workspaceFolder}/xpacks/xpack-dev-tools-arm-none-eabi-gcc/.content/bin/arm-none-eabi-gdb",
+            "serverArgs": [
+                "-l", "0",
+                "--frequency", "4000"
+            ]
+        }
+    ]
+}

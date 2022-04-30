@@ -1,0 +1,17 @@
+{
+  "configurations": [
+    {
+      "name": "Debug",
+      "intelliSenseMode": "linux-gcc-arm",
+      "compilerPath": "${workspaceFolder}/xpacks/xpack-dev-tools-arm-none-eabi-gcc/.content/bin/arm-none-eabi-gcc",
+      "compileCommands": "${workspaceFolder}\\build\\stm\\debug\\compile_commands.json"
+    },
+    {
+      "name": "Release",
+      "intelliSenseMode": "linux-gcc-arm",
+      "compilerPath": "${workspaceFolder}/xpacks/xpack-dev-tools-arm-none-eabi-gcc/.content/bin/arm-none-eabi-gcc",
+      "compileCommands": "${workspaceFolder}\\build\\stm\\release\\compile_commands.json"
+    }
+  ],
+  "version": 4
+}
