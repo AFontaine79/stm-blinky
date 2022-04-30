@@ -1,9 +1,9 @@
 #!/bin/bash
 
 JLink -device STM32L476RG -if SWD -speed 4000 << EOF
-Connect
-Halt
-LoadFile build/Src/Blinky.hex
-Reset
-Go
+connect
+halt
+loadfile build/stm/debug/Src/Blinky.hex
+r
+go
 EOF

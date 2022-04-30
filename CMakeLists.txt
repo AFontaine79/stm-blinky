@@ -11,6 +11,14 @@ include(cmake/AddExecutableWithLinkerScriptDep.cmake)
 include(cmake/GenerateMapFile.cmake)
 include(cmake/Conversions.cmake)
 
+# These prevent absolute paths from appearing in build artifacts.
+# Absolute paths are build-host specific and can result in different
+# binaries or inability to use or examine artifacts between hosts.
+add_compile_options(
+	"-fdebug-prefix-map=${CMAKE_SOURCE_DIR}=."
+	"-ffile-prefix-map=${CMAKE_SOURCE_DIR}=."
+)
+
 ##################
 # Compiler Flags #
 ##################
