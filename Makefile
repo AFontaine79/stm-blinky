@@ -12,9 +12,6 @@ endif
 # This skeleton is built for CMake's Ninja generator
 export CMAKE_GENERATOR=Ninja
 
-BUILDRESULTS ?= build
-CONFIGURED_BUILD_DEP = $(BUILDRESULTS)/build.ninja
-
 OPTIONS ?=
 INTERNAL_OPTIONS =
 
@@ -25,47 +22,43 @@ else
 	INTERNAL_OPTIONS += -DCMAKE_TOOLCHAIN_FILE=$(TOOLCHAIN)
 endif
 
-BUILD_TYPE ?=
-ifeq ($(BUILD_TYPE),)
-	INTERNAL_OPTIONS += -DCMAKE_BUILD_TYPE=Debug
-else
-	INTERNAL_OPTIONS += -DCMAKE_BUILD_TYPE=$(BUILD_TYPE)
-endif
+# Placing debug first makes it the default target if no target is given
+.PHONY: debug
+debug: INTERNAL_OPTIONS += -DCMAKE_BUILD_TYPE=Debug
+debug: build/stm/debug/build.ninja
+	$(Q)ninja -C build/stm/debug
+build/stm/debug/build.ninja:
+	$(Q)cmake -B build/stm/debug $(OPTIONS) $(INTERNAL_OPTIONS)
 
-all: default
+.PHONY: release
+release: INTERNAL_OPTIONS += -DCMAKE_BUILD_TYPE=Release
+release: build/stm/release/build.ninja
+	$(Q)ninja -C build/stm/release
+build/stm/release/build.ninja:
+	$(Q)cmake -B build/stm/release $(OPTIONS) $(INTERNAL_OPTIONS)
 
-.PHONY: default
-default: | $(CONFIGURED_BUILD_DEP)
-	$(Q)ninja -C $(BUILDRESULTS)
+all: debug release
 
-# Runs whenever the build has not been configured successfully
-$(CONFIGURED_BUILD_DEP):
-	$(Q)cmake -B $(BUILDRESULTS) $(OPTIONS) $(INTERNAL_OPTIONS)
 
 .PHONY: clean
 clean:
-	$(Q) if [ -d "$(BUILDRESULTS)" ]; then ninja -C $(BUILDRESULTS) clean; fi
+	$(Q) if [ -d build/stm/debug ]; then ninja -C build/stm/debug clean; fi
+	$(Q) if [ -d build/stm/release ]; then ninja -C build/stm/release clean; fi
 
 .PHONY: distclean
 distclean:
-	$(Q) rm -rf $(BUILDRESULTS)
-
-# Manually Reconfigure a target, esp. with new options
-.PHONY: reconfig
-reconfig:
-	$(Q) cmake -B $(BUILDRESULTS) $(OPTIONS) $(INTERNAL_OPTIONS)
+	$(Q) rm -rf build/stm
 
 .PHONY : help
 help :
 	@echo "usage: make [OPTIONS] <target>"
 	@echo "  Options:"
 	@echo "    > VERBOSE Show verbose output for Make rules. Default 0. Enable with 1."
-	@echo "    > BUILDRESULTS Directory for build results. Default buildresults."
-	@echo "    > BUILD_TYPE Specify the build type (default: RelWithDebInfo)"
-	@echo "			Option are: Debug Release MinSizeRel RelWithDebInfo"
 	@echo "    > OPTIONS Configuration options to pass to a build. Default empty."
 	@echo "Targets:"
-	@echo "  default: Builds all default targets ninja knows about"
+	@echo "  Build targets: (default is debug)"
+	@echo "    debug:     Build with debug flags"
+	@echo "    release:	  Build with optimization"
+	@echo "    default:   Build both debug and release targets"
 	@echo "  clean: cleans build artifacts, keeping build files in place"
-	@echo "  distclean: removes the configured build output directory"
-	@echo "  reconfig: Reconfigure an existing build output folder with new settings"
+	@echo "  distclean: deletes the build directory"
