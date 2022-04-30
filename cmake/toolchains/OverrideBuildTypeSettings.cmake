@@ -11,42 +11,28 @@
 
 ### Debug Flags
 SET(CMAKE_C_FLAGS_DEBUG_INIT
-	"-Og -ggdb3"
+	"-O0 -g3 -DDEBUG"
 	CACHE
 	INTERNAL "Default C compiler debug build flags.")
 SET(CMAKE_CXX_FLAGS_DEBUG_INIT
-	"-Og -ggdb3"
+	"-O0 -g3 -DDEBUG"
 	CACHE
 	INTERNAL "Default C++ compiler debug build flags.")
 SET(CMAKE_ASM_FLAGS_DEBUG_INIT
-	"-Og -ggdb3"
+	"-O0 -g3 -DDEBUG"
 	CACHE
 	INTERNAL "Default assembly compiler debug build flags")
 
-### Release with Debug Info Flags
-SET(CMAKE_C_FLAGS_MINSIZEREL_INIT
-	"-O2 -ggdb"
-	CACHE
-	INTERNAL "Default C compiler release + debug build flags.")
-SET(CMAKE_CXX_FLAGS_MINSIZEREL_INIT
-	"-O2 -ggdb"
-	CACHE
-	INTERNAL "Default C++ compiler release + debug build flags.")
-SET(CMAKE_ASM_FLAGS_MINSIZEREL_INIT
-	"-O2 -ggdb"
-	CACHE
-	INTERNAL "Default assembly compiler release + debug build flags")
-
 ### Release Flags
 SET(CMAKE_C_FLAGS_RELEASE_INIT
-	"-O2"
+	"-Os"
 	CACHE
 	INTERNAL "Default C compiler release build flags.")
 SET(CMAKE_CXX_FLAGS_RELEASE_INIT
-	"-O2"
+	"-Os"
 	CACHE
 	INTERNAL "Default C++ compiler release build flags.")
 SET(CMAKE_ASM_FLAGS_RELEASE_INIT
-	"-O2"
+	"-Os"
 	CACHE
 	INTERNAL "Default asm compiler release build flags.")

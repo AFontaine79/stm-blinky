@@ -45,11 +45,11 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 #	https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_FLAGS_INIT.html
 
 set(CMAKE_C_FLAGS_INIT
-	"${CPU_FLAGS} ${VFP_FLAGS} -fdata-sections -ffunction-sections"
+	"${CPU_FLAGS} ${VFP_FLAGS} -fdata-sections -ffunction-sections --specs=nano.specs"
 	CACHE
 	INTERNAL "Default C compiler flags.")
 set(CMAKE_CXX_FLAGS_INIT
-	"${CPU_FLAGS} ${VFP_FLAGS} -fdata-sections -ffunction-sections"
+	"${CPU_FLAGS} ${VFP_FLAGS} -fdata-sections -ffunction-sections --specs=nano.specs"
 	CACHE
 	INTERNAL "Default C++ compiler flags.")
 set(CMAKE_ASM_FLAGS_INIT
@@ -57,6 +57,10 @@ set(CMAKE_ASM_FLAGS_INIT
 	CACHE
 	INTERNAL "Default ASM compiler flags.")
 set(CMAKE_EXE_LINKER_FLAGS_INIT
-	"${LD_FLAGS} -Wl,--gc-sections -static -Wl,-lc -Wl,-lm"
+	"${LD_FLAGS} --specs=nosys.specs -Wl,--gc-sections -static -Wl,--start-group -lc -lm -Wl,--end-group"
 	CACHE
 	INTERNAL "Default linker flags.")
+
+# Build configuration overrides are specified by setting CMAKE_USER_MAKE_RULES_OVERRIDE.
+#   https://cmake.org/cmake/help/latest/variable/CMAKE_USER_MAKE_RULES_OVERRIDE.html
+set(CMAKE_USER_MAKE_RULES_OVERRIDE "${CMAKE_CURRENT_LIST_DIR}/../OverrideBuildTypeSettings.cmake")

@@ -148,7 +148,6 @@ If you need further assistance or have any questions, please file a GitHub issue
 ## Future Work
 - Add a proper install target possibly using CMake's `install()` command.  I need to explore this further since I don't fully understand `install()` yet.  At the very least, install should be platform agnostic and actually flash the hardware.
 - Possibly fix the install script to allow load over ST-Link as well as J-Link.
-- Figure out why adding `-specs=nano.specs` and `-specs=nosys.specs` didn't work.  I got a strange error about "attempt to rename spec 'link' to already defined spec 'nano_link'".  Googling that is not helpful.  I gave up and removed all `-specs=` flags.  (STMCubeIDE is using these flags though, so I dunno what gives.)
 - Figure out how to specify the build variant at the command line (e.g. `Debug` vs `Release`).
 - Follow up with other things like CI, static analysis, clang formatter, and so forth.
 
