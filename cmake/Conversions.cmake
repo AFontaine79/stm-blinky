@@ -19,18 +19,18 @@ endfunction()
 
 function(convert_to_hex target)
 	get_executable_name(${target} target_exe_name)
-	add_custom_command(
-		TARGET ${target} POST_BUILD
+	add_custom_target("${target}_hex" ALL
 		COMMAND ${CMAKE_OBJCOPY} -O ihex ${target_exe_name} ${target}.hex
 		BYPRODUCTS ${target}.hex
 	)
+	add_dependencies("${target}_hex" ${target})
 endfunction()
 
 function(convert_to_bin target)
 	get_executable_name(${target} target_exe_name)
-	add_custom_command(
-		TARGET ${target} POST_BUILD
+	add_custom_target("${target}_bin" ALL
 		COMMAND ${CMAKE_OBJCOPY} -O binary ${target_exe_name} ${target}.bin
 		BYPRODUCTS ${target}.bin
 	)
+	add_dependencies("${target}_bin" ${target})
 endfunction()
