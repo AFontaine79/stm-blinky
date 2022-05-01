@@ -2,14 +2,19 @@
 Blinky on an STM32 Nucleo board built entirely using CMake.
 
 ## About the Project
-This project is my first exercise completing a fully functional build for an embedded target using the CMake build system.  As is customary, I have chosen to implement Blinky.
+This project is my first exercise completing a fully functional build for an embedded target using the CMake build system.  As I learn more about CMake and setting up build systems, this project will evolve.
 
-Other goals for this project are to be cross-platform and simple to use.  End users should be able to build the project and flash a device with minimal effort.
+Additional goals for this project include:
+- [ ] Easy to use (as little setup effort as possible)
+- [ ] Seamless IDE integration
+- [ ] Automatic management of dev environments
+- [ ] Cross-platform support (Mac, Windows, and Linux)
+- [ ] Reproducable builds that match CI
 
 ## Project Status
 Blinky is functional for the NUCLEO-L476RG.  Other Nucleo boards could be added, but I haven't created build configurations for them yet.
 
-The project builds using CMake, but there is no proper install target yet.  Currently, a `flash_device.sh` script is provided, which requires that you have J-Link (not ST-Link) drivers installed.  This works to load a Nucleo board, although it will pop up a limited-use license agreement.
+The project builds using CMake, but there is no proper install target yet.
 
 Build and load has been verified in:
 - [x] Windows Git Bash
@@ -20,126 +25,121 @@ Build and load has been verified in:
 
 ## Getting Started
 
-### Requirements
-First things first, if you don't already have Git, install that first.  Please see the install instructions for [Linux, Mac and Windows](https://git-scm.com/downloads).  If installing for Windows, this will also install Git Bash.
+### Prereqs
 
-Also, if on Mac, you need to install [Homebrew](https://brew.sh/).  
-```
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
+#### The Basics
+To do any type of development, there are a few basic tools you should install.
 
-Most of the rest of this guide will use `apt` and `brew` for Linux and Mac respectively, but follow more specific instructions for Windows.
+If you don't already have Git, install that first.  Please see the install instructions for [Linux, Mac and Windows](https://git-scm.com/downloads).  If installing for Windows, this will also install Git Bash.
 
-#### CMake Build System
-**Windows**  
-Download and run the latest MSI installer for x64 based systems from the [CMake downloads page](https://cmake.org/download/).
+For code editing and debugging, please install [VS Code](https://code.visualstudio.com/) or [Eclipse CDT](https://www.eclipse.org/cdt/).
 
-**Mac**  
-Download a DMG file from the same link above ...OR...  
-```
-brew install cmake
-```
+> VS Code is the newer, more modern IDE and is gaining widespread popularity.  Although either IDE can be used, this readme's main focus will be VS Code.
 
-**Linux/WSL**  
+**Mac only:** although not needed for this project, it is common for developers to install the [Homebrew package manager](https://brew.sh/).  
+
+#### The xPack Build Framework
+This project uses the [xPack Build Framework](https://xpack.github.io/) to manage build tool dependencies.  Please follow xPack's [instructions for installing the prerequisites](https://xpack.github.io/install/).  These instructions have you install `Node.js` and `npm` and then use that to install `xpm`.
+
+> `npm` is Node's package manager.  `xpm` builds on top of `npm`, using Node-style `package.json` files, but is capable of installing binaries needed for building for embedded targets.  Use of `xpm` means you don't need to install CMake, Ninja, or ARM GCC.
+
+**Windows only:** If you do not already have `make` available at your command line, you will need to install it.  The easiest way to do this, if you do not wish to deal with MinGW, MSYS, or Cygwin, is to use `xpm` to install it globally.  
 ```
-sudo apt-get install cmake
-```
-Note that Ubuntu package registries tend to be somewhat out of date.  For example, the CMake package referenced for Ubuntu 20.04LTS is [3.16.3](https://packages.ubuntu.com/focal/cmake), which will fail for this project (minimum required CMake is 3.18).  One suggestion for getting around this is to use `pip` to install Cmake.   
-```
-pip3 install cmake
+xpm install --global @xpack-dev-tools/windows-build-tools@latest
 ```
 
-#### Ninja
-CMake is a build system generator; It is not the build system itself.  It will generate the build files for the build system of our choice based on our CMake scripts.  In our case, we are using Ninja as the actual build system.
+#### STM32 Development Tools
+All NUCLEO boards come with an on-board ST-Link that is used to provide a programming and debug connection.  We will need the necessary drivers and programs to talk to the ST-Link.
 
-**Windows**  
-This one leaves you a little bit on your own.  As far as I can tell, there is no installer for Ninja.  I recommend going to the [latest release](https://github.com/ninja-build/ninja/releases/tag/v1.10.2) on the GitHub repo and downloaded `ninja-win.zip`.  After unzipping you will find the Ninja executable.  The main thing is that this needs to be in your Windows PATH environment variable.  For this, I made a `%USERPROFILE%\tools` directory and added its path to my user's PATH environment variable in `Advanced System Settings`.  This approach of adding to the PATH variable should be used for any tools that do not already add themselves to the path.
+Although we are not using it, you will need to install ST's [STM32CubeIDE](https://www.st.com/en/development-tools/stm32cubeide.html).  This is because it provides the necessary programs and drivers to create a debug connection using the ST-Link.
 
-**Mac**  
-```
-brew install ninja
-```
+You may optionally install the [STM32 Cube Programmer](https://www.st.com/en/development-tools/stm32cubeprog.html).  This is a standalone program that provides a GUI for erasing, loading, and configuring ST devices.
 
-**Linux/WSL**  
-```
-sudo apt install ninja-build
-```
+#### SEGGER J-Link Drivers
+_This step is optional._
 
-#### Make
-Although we are using CMake as the build system, CMake in itself is not inherently a one-touch system.  Multiple commands are needed the first time the build is run.  To make this truly one-touch, we use a Makefile shim as inspired by the CMake course at [Embedded Artistry](https://embeddedartistry.com/).  This means we need `make` at the command line.
+Rather than installing _STM32CubeIDE_, you can instead convert the on-board ST-Link to a J-Link and use SEGGER's drivers.
 
-**Windows**  
-For Windows, we will install MinGW and add the MSYS package in the install configuration.  I recommend to use [this download](https://sourceforge.net/projects/mingw/) and follow [these instructions](https://www.ics.uci.edu/~pattis/common/handouts/mingweclipse/mingw.html).
+First, use [this tool](https://www.segger.com/products/debug-probes/j-link/models/other-j-links/st-link-on-board/) to convert the on-board ST-Link.
 
-**Mac**  
-If you haven't already, you may need to "Install Command Line Tools" from Xcode, although I am not certain whether this is necessary.
+Second, install the [SEGGER J-Link drivers](https://www.segger.com/downloads/jlink/) on your system.
+ 
+#### VS Code Extensions
+For build and debug using VS Code, the following extensions are required.
+- [C/C++](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools)
+- [Cortex-Debug](https://marketplace.visualstudio.com/items?itemName=marus25.cortex-debug)
+- [xPack C/C++ Managed Build Tools](https://marketplace.visualstudio.com/items?itemName=ilg-vscode.xpack)
 
-**Linux/WSL**  
-If, for whatever reason, `make` is not already available in your shell:  
-```
-sudo apt install build-essential
-```
+The following are optional but not necessary.  They provide syntax highlighting for the non C/C++ files.
+- [CMake](https://marketplace.visualstudio.com/items?itemName=twxs.cmake)
+- [Arm Assembly](https://marketplace.visualstudio.com/items?itemName=dan-c-underwood.arm)
+- [LinkerScript](https://marketplace.visualstudio.com/items?itemName=ZixuanWang.linkerscript)
 
-#### GNU ARM Embedded Toolchain
-This is the toolchain to compile and link the project and generate the final `.hex` file output to be loaded onto the board.  Ninja is not the compiler or linker.  Like make, it is only a system for determining what components need compiling and linking when (re)running a build.
+#### Eclipse
+_This section not yet written._
 
-Prebuilt ARM GCC packages for Windows, Mac and Linux can be [downloaded from the ARM website](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads).
+### Building (from the command line)
+The following commands can be issued from the project root after cloning the repo.  
+- `xpm install`
+- `xpm run build --config Debug`
 
-**Windows**  
-For Windows, the package will be an installer that places its contents in `C:\Program Files (x86)\GNU Arm Embedded Toolchain\<version>`.  Inside this is a `bin` folder that needs to be added to your path.  See instructions above.
+The first command sets up the developer environmment, pulling all of the build tools specified in `package.json`.  _It is only necessary to run this once after cloning the repo._
 
-**Mac and Linux**  
-The zip file can be unzipped anywhere.  I recommend placing this in your home path (e.g. `~/toolchains`.  Wherever the `bin` folder for this ends up, you need to add it to your PATH.  Do this in `~/.bash_profile` or `~/.bashrc`.  Example:
-```
-export PATH="$PATH:$HOME/toolchains/gcc-arm-none-eabi/bin/"
-```
-
-### Building
-Issue `make` from the root directory where you clone this repo.  It will handle configuring the initial CMake run and automatically run Ninja afterwords.  After the first run, `make` can be invoked again to run Ninja without rerunning CMake.  Note that if any CMake script files are modified, this will cause a rerun of CMake.  All dependencies are properly tracked.
-
-The build outputs are `build`, `build.map` and `build.hex` in the `build/Src` directory.
-
-**Note:** `build` is the ELF file although it is not named `build.elf`.
+The second command runs the build.  This will create `Blinky.elf` and `Blinky.hex` in `build/stm/debug/Src/`.
 
 ### Loading
-There is, as of yet, no proper install target.  Instead, you will need to follow directions below depending on how your Nucleo board appears when connected to your computer.  By default, Nucleo boards have a built-in ST-Link.  The Nucleo should identify as an ST-Link when connected to your computer.  However, the on-board ST-Link [can be converted to a J-Link](https://www.segger.com/products/debug-probes/j-link/models/other-j-links/st-link-on-board/), which allows for use of the capabilities of the J-Link.
 
-#### If your Nucleo shows up as ST-Link
-- If you do not have it already, download and install [STM32 Cube Programmer](https://www.st.com/en/development-tools/stm32cubeprog.html).
+#### If your NUCLEO is configured as an ST-Link
+_There is not yet a fully automated mechanism for loading the NUCLEO from the command line._
+
 - Run the build as described above.
-- Connect your Nucleo board.
+- Connect your NUCLEO board.
 - Start STM32CubeProgrammer.
 - Click the green 'Connect' button in the upper right.  Make sure the status above the 'Connect' button changes to Connected.  If this fails, check that your board is enumerating correclty and/or check the drop-down selection to the left of the 'Connect' button.
 - After connecting, on the left-hand set of icons, select the one that looks like an arrow pointing down into a device.  The title above the active area of the GUI should change to "Erasing & Programming".
-- For the file path, click 'Browse' and select the `Blinky.hex` file that is in the `build/Src` subfolder.  The `build` folder appears after running the build.
+- For the file path, click 'Browse' and select the `Blinky.hex` file that is in the `build/stm/debug/Src` subfolder.  The `build` folder appears after running the build.
 - Select 'Run after programming'.
 - Click 'Start Programming'.
 - Click the green 'Disconnect' button in the upper right.
  
 The board should now be blinking the LED once per second.
 
-#### If your Nucleo shows up as a J-Link
-- If you do not have them already, download and install the [SEGGER J-Link drivers](https://www.segger.com/downloads/jlink/).
+#### If your NUCLEO is configured as a J-Link
 - Run the build as described above.
 - Run `./flash-device.sh` from the root directory of the repo.  (On Windows, this can be done from Git Bash.)
  
 The board should now be blinking the LED once per second.
 
-### Testing
-Not yet implemented
-
-### Cleaning
-`make clean` removes the build files. `make distclean` blows away the `build` folder.
-
-### Debugging
-**Note:** No IDE is necessary for editing, buidling or debugging the code and no instructions here should be taken as an indication otherwise.  Use of an IDE is a matter of personal preference.
-
-Debugging has been proven on Eclipse CDT with GNU MCU plug-in using the GDB SEGGER J-Link Debugger launch configuration.  It has not yet been proven on VS Code.
-
-#### Eclipse
-_Instructions not yet written_
+### Build and Debug Using IDEs
 
 #### VS Code
+Make sure you have updated VS Code with the necessary extensions described above.
+
+Select _Open Folder_ and select the folder where you hace cloned this repo.
+
+Select the Explorer icon in the Activity Bar.
+
+Underneath the Explorer view, you should see XPACK ACTIONS.
+
+Run the `install` command.  This will set up the dev environment locally.  This may take a minute so please wait for this to finish.
+
+Expand the `Debug` configuration and run the `build` command.  This will build the project and create the `Blinky.elf` and `Blinky.hex` output files.
+
+At this point, VS Code has enough information to update IntelliSense, but you may need to select the configuration.  In the command palette, enter `C/C++: Select a Configuration` and choose `Debug`.  Open `Src/main.c` and verify there is no red squiggle underneath `#include "stm32l4xx.h"`.
+
+Set a breakpoint on the first line in `main()`.
+
+Select the Run and Debug icon in the Activity Bar.
+
+In the drop-down at the top of the Side Bar, choose `Launch ST-Link` or `Launch J-Link` depending on how your NUCLEO is configured.
+
+Make sure your NUCLEO board is connected to your comptuer.
+
+Press the green arrow to start debugging.
+
+
+
+#### Eclipse
 _Instructions not yet written_
 
 ## Need help?
