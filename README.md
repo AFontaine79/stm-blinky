@@ -1,6 +1,29 @@
 # STM32 Blinky
 Blinky on an STM32 Nucleo board built entirely using CMake.
 
+## Table of Contents
+- [About the Project](#about-the-project)
+- [Project Status](#project-status)
+- [Getting Started](#getting-started)
+  - [Prereqs](#prereqs)
+    - [The Basics](#the-basics)
+    - [The xPack Build Framework](#the-xpack-build-framework)
+    - [STM32 Development Tools](#stm32-development-tools)
+    - [SEGGER J-Link Drivers](#segger-j-link-drivers)
+    - [VS Code Extensions](#vs-code-extensions)
+    - [Eclipse](#eclipse)
+  - [Building (from the command line)](#building-from-the-command-line)
+  - [Loading](#loading)
+    - [If your NUCLEO is configured as an ST-Link](#if-your-nucleo-is-configured-as-an-st-link)
+    - [If your NUCLEO is configured as a J-Link](#if-your-nucleo-is-configured-as-a-j-link)
+  - [Build and Debug Using IDEs](#build-and-debug-using-ides)
+    - [VS Code](#vs-code)
+    - [Eclipse](#eclipse-1)
+- [Need help?](#need-help)
+- [Future Work](#future-work)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
+
 ## About the Project
 This project is my first exercise completing a fully functional build for an embedded target using the CMake build system.  As I learn more about CMake and setting up build systems, this project will evolve.
 
@@ -13,6 +36,8 @@ Additional goals for this project include:
 
 > **Note:** Although, the xpm dev environment is creating reprodicable builds, there is no CI set up yet, which is why the last goal is not completed.
 
+**[Back to top](#table-of-contents)**
+
 ## Project Status
 Blinky is functional for the NUCLEO-L476RG.  Other Nucleo boards could be added, but I haven't created build configurations for them yet.
 
@@ -24,6 +49,8 @@ Build and load has been verified in:
 - [x] Ubuntu in Windows/WSL
 - [ ] Native Linux system
 - [ ] Mac OS X
+
+**[Back to top](#table-of-contents)**
 
 ## Getting Started
 
@@ -39,6 +66,8 @@ For code editing and debugging, please install [VS Code](https://code.visualstud
 > VS Code is the newer, more modern IDE and is gaining widespread popularity.  Although either IDE can be used, this readme's main focus will be VS Code.
 
 **Mac only:** although not needed for this project, it is common for developers to install the [Homebrew package manager](https://brew.sh/).  
+
+**[Back to top](#table-of-contents)**
 
 #### The xPack Build Framework
 This project uses the [xPack Build Framework](https://xpack.github.io/) to manage build tool dependencies.  Please follow xPack's [instructions for installing the prerequisites](https://xpack.github.io/install/).  These instructions have you install `Node.js` and `npm` and then use that to install `xpm`.
@@ -56,12 +85,16 @@ Unsupported engine for xpm@0.13.2: wanted: {"node":">=12"} (current: {"node":"10
 ```
 I recommend using the recently released Ubuntu 22.04 LTS.  Otherwise, you will probably need to download a `.deb` or `.tar.gz` file directly from nodejs.org.
 
+**[Back to top](#table-of-contents)**
+
 #### STM32 Development Tools
 All NUCLEO boards come with an on-board ST-Link that is used to provide a programming and debug connection.  We will need the necessary drivers and programs to talk to the ST-Link.
 
 Although we are not using it, you will need to install ST's [STM32CubeIDE](https://www.st.com/en/development-tools/stm32cubeide.html).  This is because it provides the necessary programs and drivers to create a debug connection using the ST-Link.
 
-You may optionally install the [STM32 Cube Programmer](https://www.st.com/en/development-tools/stm32cubeprog.html).  This is a standalone program that provides a GUI for erasing, loading, and configuring ST devices.
+You may optionally install the [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html).  This is a standalone program that provides a GUI for erasing, loading, and configuring ST devices.
+
+**[Back to top](#table-of-contents)**
 
 #### SEGGER J-Link Drivers
 _This step is optional._
@@ -71,6 +104,8 @@ Rather than installing _STM32CubeIDE_, you can instead convert the on-board ST-L
 First, use [this tool](https://www.segger.com/products/debug-probes/j-link/models/other-j-links/st-link-on-board/) to convert the on-board ST-Link.
 
 Second, install the [SEGGER J-Link drivers](https://www.segger.com/downloads/jlink/) on your system.
+
+**[Back to top](#table-of-contents)**
  
 #### VS Code Extensions
 For build and debug using VS Code, the following extensions are required.
@@ -83,10 +118,16 @@ The following are optional but not necessary.  They provide syntax highlighting 
 - [Arm Assembly](https://marketplace.visualstudio.com/items?itemName=dan-c-underwood.arm)
 - [LinkerScript](https://marketplace.visualstudio.com/items?itemName=ZixuanWang.linkerscript)
 
+**[Back to top](#table-of-contents)**
+
 #### Eclipse
 _This section not yet written._
 
+**[Back to top](#table-of-contents)**
+
 ### Building (from the command line)
+**Note:** If you do not wish to use command-line tools, skip ahead to [Build and Debug Using IDEs](#build-and-debug-using-ides).
+
 The following commands can be issued from the project root after cloning the repo.  
 - `xpm install`
 - `xpm run build --config Debug`
@@ -94,6 +135,8 @@ The following commands can be issued from the project root after cloning the rep
 The first command sets up the developer environmment, pulling all of the build tools specified in `package.json`.  _It is only necessary to run this step once after cloning the repo._
 
 The second command runs the build.  This will create `Blinky.elf` and `Blinky.hex` in `build/stm/debug/Src/`.
+
+**[Back to top](#table-of-contents)**
 
 ### Loading
 
@@ -112,16 +155,20 @@ _There is not yet a fully automated mechanism for loading the NUCLEO from the co
  
 The board should now be blinking the LED once per second.
 
+**[Back to top](#table-of-contents)**
+
 #### If your NUCLEO is configured as a J-Link
 - Run the build as described above.
 - Run `./flash-device.sh` from the root directory of the repo.  (On Windows, this can be done from Git Bash.)
  
 The board should now be blinking the LED once per second.
 
+**[Back to top](#table-of-contents)**
+
 ### Build and Debug Using IDEs
 
 #### VS Code
-Make sure you have updated VS Code with the necessary extensions described above.
+Make sure you have updated VS Code with the necessary extensions [described above](#vs-code-extensions).
 
 Select _Open Folder_ and select the folder where you cloned this repo.  
 ![Open Folder](Images/vscode/01_OpenFolder.png)
@@ -213,6 +260,7 @@ With the code paused, expand register `CR1` under `TIM2` in the peripheral regis
 This opens an edit box to accept a new value.  Enter `0b0` to halt blinking of the LED.  Enter `0b1` to resume blinking.  Note, this will pause (not reset) `TIM2`.  If the LED was on when `0b0` was entered, it will remain on.  If it was off, it will remain off.  `TIM2` will resume the count from wherever it left off when `0b1` is entered.  
 ![TIM2 CEN Update](Images/vscode/23_UpdateTim2Cen.png)
 
+**[Back to top](#table-of-contents)**
 
 #### Eclipse
 _Instructions not yet written_
@@ -225,6 +273,8 @@ If you need further assistance or have any questions, please file a GitHub issue
 - Possibly fix the install script to allow load over ST-Link as well as J-Link.
 - Alternatively, add images to the STM32 Cube Programmer instructions so that they are easier to follow.
 - Follow up with other things like CI, static analysis, clang formatter, and so forth.
+
+**[Back to top](#table-of-contents)**
 
 ## License
 MIT license.  See LICENSE file for details.
