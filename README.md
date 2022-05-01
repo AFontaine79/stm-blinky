@@ -5,11 +5,13 @@ Blinky on an STM32 Nucleo board built entirely using CMake.
 This project is my first exercise completing a fully functional build for an embedded target using the CMake build system.  As I learn more about CMake and setting up build systems, this project will evolve.
 
 Additional goals for this project include:
-- [ ] Easy to use (as little setup effort as possible)
-- [ ] Seamless IDE integration
-- [ ] Automatic management of dev environments
-- [ ] Cross-platform support (Mac, Windows, and Linux)
+- [x] Easy to use (as little setup effort as possible)
+- [x] Seamless IDE integration
+- [x] Automatic management of dev environments
+- [x] Cross-platform support (Mac, Windows, and Linux)
 - [ ] Reproducable builds that match CI
+
+> **Note:** Although, the xpm dev environment is creating reprodicable builds, there is no CI set up yet, which is why the last goal is not completed.
 
 ## Project Status
 Blinky is functional for the NUCLEO-L476RG.  Other Nucleo boards could be added, but I haven't created build configurations for them yet.
@@ -48,6 +50,12 @@ This project uses the [xPack Build Framework](https://xpack.github.io/) to manag
 xpm install --global @xpack-dev-tools/windows-build-tools@latest
 ```
 
+**Linux only:** Xpm requires a fairly recent version of node.  If you are on Ubuntu 20.04 LTS, the version of node installed by `apt install nodejs` will be too old.  When installing xpm, you will encounter not-supported errors:  
+```
+Unsupported engine for xpm@0.13.2: wanted: {"node":">=12"} (current: {"node":"10.19.0","npm":"6.14.4"})
+```
+I recommend using the recently released Ubuntu 22.04 LTS.  Otherwise, you will probably need to download a `.deb` or `.tar.gz` file directly from nodejs.org.
+
 #### STM32 Development Tools
 All NUCLEO boards come with an on-board ST-Link that is used to provide a programming and debug connection.  We will need the necessary drivers and programs to talk to the ST-Link.
 
@@ -83,7 +91,7 @@ The following commands can be issued from the project root after cloning the rep
 - `xpm install`
 - `xpm run build --config Debug`
 
-The first command sets up the developer environmment, pulling all of the build tools specified in `package.json`.  _It is only necessary to run this once after cloning the repo._
+The first command sets up the developer environmment, pulling all of the build tools specified in `package.json`.  _It is only necessary to run this step once after cloning the repo._
 
 The second command runs the build.  This will create `Blinky.elf` and `Blinky.hex` in `build/stm/debug/Src/`.
 
@@ -215,6 +223,7 @@ If you need further assistance or have any questions, please file a GitHub issue
 ## Future Work
 - Add a proper install target possibly using CMake's `install()` command.  I need to explore this further since I don't fully understand `install()` yet.  At the very least, install should be platform agnostic and actually flash the hardware.
 - Possibly fix the install script to allow load over ST-Link as well as J-Link.
+- Alternatively, add images to the STM32 Cube Programmer instructions so that they are easier to follow.
 - Follow up with other things like CI, static analysis, clang formatter, and so forth.
 
 ## License
