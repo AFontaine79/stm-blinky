@@ -1,7 +1,16 @@
 # Ignore build output
 build/
 
+# Ignore VS Code files
+.vscode/*
+!.vscode/c_cpp_properties.json
+!.vscode/launch.json
+
 # Ignore Eclipse files
 .project
 .cproject
 .settings/
+
+# Ignore xPack files
+node_modules/
+xpacks/
